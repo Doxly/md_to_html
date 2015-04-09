@@ -12,12 +12,14 @@ Author Pichugin Viacheslav.
 Usage: mdtohtml.py <file name>
 """
 
-import os, sys, codecs
+import os, sys, codecs, re
 
+debug = False
 headtemplate = """<!DOCTYPE html>
 <html lan="eng">
 <head>
     <meta type="text/html" charset="utf-8">
+    <<css>>
 </head>
 <body>
 """
@@ -34,28 +36,41 @@ def convert(mdfilename):
     mdencoding = 'utf-8'
     htmlencoding = 'utf-8'
 
-
     output = headtemplate
+
+    # Process css
+    css = ''
+    if "--css" in sys.argv:
+        css = '<link rel="stylesheet" href="main.css">'
+    output = output.replace('<<css>>',css)
+
+    # Process markdown file
     mdfile = codecs.open(mdfilename, 'r', mdencoding)
     text = markdown2.markdown(mdfile.read())
     output += text
 
     output += tailtemplate
 
+    # Write result
     htmlfilename = mdfilename.split('.')[0]+'.html'
     htmlfile = codecs.open(htmlfilename, 'w', htmlencoding)
     htmlfile.write(output)
 
-    # print output
+    if debug:
+        print output
 
     print "'%s' file created" % (htmlfilename)
 
 def main():
-    if len(sys.argv)==1:
+    for arg in sys.argv:
+        if re.match('.*\.md$|.*\.mdown$|.*\.markdown',arg, re.IGNORECASE):
+            mdfilename = arg
+            # print 'mdfilename=', mdfilename
+
+    if not 'mdfilename' in locals():
         print "You forgot to enter markdown file name"
         sys.exit(1)
 
-    mdfilename = sys.argv[1]
     convert(mdfilename)
 
 
