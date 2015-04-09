@@ -12,40 +12,50 @@ Author Pichugin Viacheslav.
 Usage: mdtohtml.py <file name>
 """
 
-import markdown2
 import os, sys, codecs
-# print 'mdtohtml call'
 
-mdencoding = 'utf-8'
-htmlencoding = 'utf-8'
+def convert(mdfilename):
 
-if len(sys.argv)==1:
-	print "You forgot to enter markdown file name"
-	sys.exit(1)
+    import markdown2
+    # print 'mdtohtml call'
 
-mdfilename = sys.argv[1]
+    mdencoding = 'utf-8'
+    htmlencoding = 'utf-8'
 
-output = """
-<!DOCTYPE html>
-<html lan="eng">
-<head>
-	<meta type="text/html" charset="utf-8">
-</head>
-<body>
-"""
-mdfile = codecs.open(mdfilename, 'r', mdencoding)
-text = markdown2.markdown(mdfile.read())
-output += text
 
-output += """
-</body>
-</html>
-"""
+    output = """
+    <!DOCTYPE html>
+    <html lan="eng">
+    <head>
+    	<meta type="text/html" charset="utf-8">
+    </head>
+    <body>
+    """
+    mdfile = codecs.open(mdfilename, 'r', mdencoding)
+    text = markdown2.markdown(mdfile.read())
+    output += text
 
-htmlfilename = mdfilename.split('.')[0]+'.html'
-htmlfile = codecs.open(htmlfilename, 'w', htmlencoding)
-htmlfile.write(output)
+    output += """
+    </body>
+    </html>
+    """
 
-# print output
+    htmlfilename = mdfilename.split('.')[0]+'.html'
+    htmlfile = codecs.open(htmlfilename, 'w', htmlencoding)
+    htmlfile.write(output)
 
-print "'%s' file created" % (htmlfilename)
+    # print output
+
+    print "'%s' file created" % (htmlfilename)
+
+def main():
+    if len(sys.argv)==1:
+        print "You forgot to enter markdown file name"
+        sys.exit(1)
+
+    mdfilename = sys.argv[1]
+    convert(mdfilename)
+
+
+if __name__ == '__main__':
+    main()
