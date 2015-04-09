@@ -14,6 +14,18 @@ Usage: mdtohtml.py <file name>
 
 import os, sys, codecs
 
+headtemplate = """<!DOCTYPE html>
+<html lan="eng">
+<head>
+    <meta type="text/html" charset="utf-8">
+</head>
+<body>
+"""
+
+tailtemplate = """</body>
+</html>
+"""
+
 def convert(mdfilename):
 
     import markdown2
@@ -23,22 +35,12 @@ def convert(mdfilename):
     htmlencoding = 'utf-8'
 
 
-    output = """
-    <!DOCTYPE html>
-    <html lan="eng">
-    <head>
-    	<meta type="text/html" charset="utf-8">
-    </head>
-    <body>
-    """
+    output = headtemplate
     mdfile = codecs.open(mdfilename, 'r', mdencoding)
     text = markdown2.markdown(mdfile.read())
     output += text
 
-    output += """
-    </body>
-    </html>
-    """
+    output += tailtemplate
 
     htmlfilename = mdfilename.split('.')[0]+'.html'
     htmlfile = codecs.open(htmlfilename, 'w', htmlencoding)
