@@ -16,6 +16,10 @@ import os, sys, codecs, re
 import argparse
 
 debug = False
+MDENCODING = 'utf-8'
+HTMLENCODING = 'utf-8'
+BOM = u'\ufeff'
+
 headtemplate = """<!DOCTYPE html>
 <html lan="eng">
 <head>
@@ -34,8 +38,6 @@ def convert(mdfilename, css):
     import markdown2
     # print 'mdtohtml call'
 
-    mdencoding = 'utf-8'
-    htmlencoding = 'utf-8'
 
     output = headtemplate
 
@@ -46,15 +48,20 @@ def convert(mdfilename, css):
     output = output.replace('<<css>>',css_str)
 
     # Process markdown file
-    mdfile = codecs.open(mdfilename, 'r', mdencoding)
-    text = markdown2.markdown(mdfile.read(), extras=['tables', 'wiki-tables'])
+    mdfile = codecs.open(mdfilename, 'r', MDENCODING)
+    mdtext = mdfile.read();
+    # check for BOM 
+    if mdtext[0] == BOM:
+        mdtext = mdtext[1:]
+        print 'remove BOM'
+    text = markdown2.markdown(mdtext, extras=['tables', 'wiki-tables'])
     output += text
 
     output += tailtemplate
 
     # Write result
     htmlfilename = mdfilename.split('.')[0]+'.html'
-    htmlfile = codecs.open(htmlfilename, 'w', htmlencoding)
+    htmlfile = codecs.open(htmlfilename, 'w', HTMLENCODING)
     htmlfile.write(output)
 
     if debug:
