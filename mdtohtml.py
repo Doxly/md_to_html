@@ -13,6 +13,7 @@ Usage: mdtohtml.py <file name>
 """
 
 import os, sys, codecs, re
+import argparse
 
 debug = False
 headtemplate = """<!DOCTYPE html>
@@ -28,7 +29,7 @@ tailtemplate = """</body>
 </html>
 """
 
-def convert(mdfilename):
+def convert(mdfilename, css):
 
     import markdown2
     # print 'mdtohtml call'
@@ -39,10 +40,10 @@ def convert(mdfilename):
     output = headtemplate
 
     # Process css
-    css = ''
-    if "--css" in sys.argv:
-        css = '<link rel="stylesheet" href="main.css">'
-    output = output.replace('<<css>>',css)
+    css_str = ''
+    if css:
+        css_str = '<link rel="stylesheet" href="main.css">'
+    output = output.replace('<<css>>',css_str)
 
     # Process markdown file
     mdfile = codecs.open(mdfilename, 'r', mdencoding)
@@ -62,16 +63,16 @@ def convert(mdfilename):
     print "'%s' file created" % (htmlfilename)
 
 def main():
-    for arg in sys.argv:
-        if re.match('.*\.md$|.*\.mdown$|.*\.markdown',arg, re.IGNORECASE):
-            mdfilename = arg
-            # print 'mdfilename=', mdfilename
+    parser = argparse.ArgumentParser(description = 'Convert given markdown file into HTML-file. Name of HTML-file corresponds to the markdown one.')
+    parser.add_argument('-css', '--css', action = 'store_true', dest = 'css', help = 'Enter if you want to link your html file with main.css')
+    parser.add_argument('mdfilename', help = 'Markdown file name')
+    args = parser.parse_args()
 
-    if not 'mdfilename' in locals():
+    if not re.match('.*\.md$|.*\.mdown$|.*\.markdown',args.mdfilename, re.IGNORECASE):
         print "You forgot to enter markdown file name"
         sys.exit(1)
 
-    convert(mdfilename)
+    convert(args.mdfilename, args.css)
 
 
 if __name__ == '__main__':
