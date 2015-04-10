@@ -47,7 +47,7 @@ def convert(mdfilename, css):
 
     # Process markdown file
     mdfile = codecs.open(mdfilename, 'r', mdencoding)
-    text = markdown2.markdown(mdfile.read())
+    text = markdown2.markdown(mdfile.read(), extras=['tables', 'wiki-tables'])
     output += text
 
     output += tailtemplate
