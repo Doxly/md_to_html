@@ -6,10 +6,8 @@ insteed of body content.
 Markdown file must be in UTF-8 encoding.
 Result file would bi in UTF-8 encoding.
 
-Author Pichugin Viacheslav.
+Author: Pichugin Viacheslav.
 2015
-
-Usage: mdtohtml.py <file name>
 """
 
 import os, sys, codecs, re
@@ -33,7 +31,7 @@ tailtemplate = """</body>
 </html>
 """
 
-def convert(mdfilename, css):
+def convert(mdfilename, css, encoding):
 
     import markdown2
     # print 'mdtohtml call'
@@ -48,7 +46,7 @@ def convert(mdfilename, css):
     output = output.replace('<<css>>',css_str)
 
     # Process markdown file
-    mdfile = codecs.open(mdfilename, 'r', MDENCODING)
+    mdfile = codecs.open(mdfilename, 'r', encoding)
     mdtext = mdfile.read();
     # check for BOM 
     if mdtext[0] == BOM:
@@ -72,6 +70,7 @@ def convert(mdfilename, css):
 def main():
     parser = argparse.ArgumentParser(description = 'Convert given markdown file into HTML-file. Name of HTML-file corresponds to the markdown one.')
     parser.add_argument('-css', '--css', action = 'store_true', dest = 'css', help = 'Enter if you want to link your html file with main.css')
+    parser.add_argument('--encoding', default = MDENCODING, help = 'Encoding of markdown file. UTF-8 if ommit. You can use cp1251, cp866 etc.')
     parser.add_argument('mdfilename', help = 'Markdown file name')
     args = parser.parse_args()
 
@@ -79,7 +78,7 @@ def main():
         print "You forgot to enter markdown file name"
         sys.exit(1)
 
-    convert(args.mdfilename, args.css)
+    convert(args.mdfilename, args.css, args.encoding)
 
 
 if __name__ == '__main__':
