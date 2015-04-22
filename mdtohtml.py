@@ -10,15 +10,18 @@ Author: Pichugin Viacheslav.
 2015
 """
 
-import os, sys, codecs, re
+import os
+import sys
+import codecs
+import re
 import argparse
 
-debug = False
-MDENCODING = 'utf-8'
-HTMLENCODING = 'utf-8'
+_DEBUG = False
+MD_ENCODING = 'utf-8'
+HTML_ENCODING = 'utf-8'
 BOM = u'\ufeff'
 
-headtemplate = """<!DOCTYPE html>
+head_template = """<!DOCTYPE html>
 <html lan="eng">
 <head>
     <meta type="text/html" charset="utf-8">
@@ -27,17 +30,16 @@ headtemplate = """<!DOCTYPE html>
 <body>
 """
 
-tailtemplate = """</body>
+tail_template = """</body>
 </html>
 """
 
-def convert(mdfilename, css, encoding):
+def convert(md_file_name, css, encoding):
 
     import markdown2
     # print 'mdtohtml call'
 
-
-    output = headtemplate
+    output = head_template
 
     # Process css
     css_str = ''
@@ -46,39 +48,40 @@ def convert(mdfilename, css, encoding):
     output = output.replace('<<css>>',css_str)
 
     # Process markdown file
-    mdfile = codecs.open(mdfilename, 'r', encoding)
-    mdtext = mdfile.read();
+    md_file = codecs.open(md_file_name, 'r', encoding)
+    md_text = md_file.read();
     # check for BOM 
-    if mdtext[0] == BOM:
-        mdtext = mdtext[1:]
+    # if md_text[0] == BOM:
+    if md_text.startswith(BOM):
+        md_text = md_text[1:]
         print 'remove BOM'
-    text = markdown2.markdown(mdtext, extras=['tables', 'wiki-tables'])
+    text = markdown2.markdown(md_text, extras=['tables', 'wiki-tables'])
     output += text
 
-    output += tailtemplate
+    output += tail_template
 
     # Write result
-    htmlfilename = mdfilename.split('.')[0]+'.html'
-    htmlfile = codecs.open(htmlfilename, 'w', HTMLENCODING)
-    htmlfile.write(output)
+    html_filename = md_file_name.split('.')[0]+'.html'
+    html_file = codecs.open(html_filename, 'w', HTML_ENCODING)
+    html_file.write(output)
 
-    if debug:
+    if _DEBUG:
         print output
 
-    print "'%s' file created" % (htmlfilename)
+    print "'%s' file created" % (html_filename)
 
 def main():
     parser = argparse.ArgumentParser(description = 'Convert given markdown file into HTML-file. Name of HTML-file corresponds to the markdown one.')
     parser.add_argument('-css', '--css', action = 'store_true', dest = 'css', help = 'Enter if you want to link your html file with main.css')
-    parser.add_argument('--encoding', default = MDENCODING, help = 'Encoding of markdown file. UTF-8 if ommit. You can use cp1251, cp866 etc.')
-    parser.add_argument('mdfilename', help = 'Markdown file name')
+    parser.add_argument('--encoding', default = MD_ENCODING, help = 'Encoding of markdown file. UTF-8 if ommit. You can use cp1251, cp866 etc.')
+    parser.add_argument('md_file_name', help = 'Markdown file name')
     args = parser.parse_args()
 
-    if not re.match('.*\.md$|.*\.mdown$|.*\.markdown',args.mdfilename, re.IGNORECASE):
+    if not re.match('.*\.md$|.*\.mdown$|.*\.markdown',args.md_file_name, re.IGNORECASE):
         print "You forgot to enter markdown file name"
         sys.exit(1)
 
-    convert(args.mdfilename, args.css, args.encoding)
+    convert(args.md_file_name, args.css, args.encoding)
 
 
 if __name__ == '__main__':
