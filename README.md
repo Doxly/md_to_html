@@ -9,7 +9,17 @@ insteed of body content.
 _Author Pichugin Viacheslav_.  
 2015
 
-##Usage: 
-    mdtohtml.py <file name>
+##usage: 
+    mdtohtml.py [-h] [-css] [--encoding ENCODING] md_file_name
 
-Script accept single argument - file name of markdown file. Script makes html text and write to file with the same name as markdown one, but with extention "html"
+Convert given markdown file into HTML-file. Name of HTML-file corresponds to
+the markdown one.
+
+positional arguments:
+  md_file_name         Markdown file name
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -css, --css          Enter if you want to link your html file with main.css
+  --encoding ENCODING  Encoding of markdown file. UTF-8 if ommit. You can use
+                       cp1251, cp866 etc.
