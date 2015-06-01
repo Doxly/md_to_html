@@ -132,8 +132,8 @@ This is main text. And some text in it is *selected*. And other __selection__. A
 
     def __test_convert(self, with_bom = False):
         # create test file, convert it, check generated html-file
-        md_file_name = '.\\tests\data\utest.md'
-        html_file_name = '.\\tests\data\utest.html'
+        md_file_name = '.\\tests\utest.md'
+        html_file_name = '.\\tests\utest.html'
         md_file_encoding = 'utf-8'
 
         self.__create_md_file(md_file_name,with_bom = with_bom)
@@ -141,15 +141,18 @@ This is main text. And some text in it is *selected*. And other __selection__. A
         if os.path.isfile(html_file_name):
             os.remove(html_file_name)
 
+        # check appearance of result html file after convertation
         assert_false(os.path.isfile(html_file_name))
         self.convertor.convert(md_file_name, None, md_file_encoding)
         assert_true(os.path.isfile(html_file_name))
 
-        # check some parts in result html file
+        # Read content of result html file.
         html_file = codecs.open(html_file_name, 'r', 
             md_to_html.mdtohtml.HTML_ENCODING)
         html_text = html_file.read()
         html_file.close()
+
+        # check some parts in result html file
         assert_regexp_matches(html_text, 
             r'<head>(.|\n)*</head>(.|\n)*<body>(.|\n)*</body>')
         assert_regexp_matches(html_text, 
@@ -168,12 +171,12 @@ This is main text. And some text in it is *selected*. And other __selection__. A
         self.__test_convert(with_bom=True)
 
     def test_main(self):
-        md_file_name = '.\\tests\data\utest.md'
-        html_file_name = '.\\tests\data\utest.html'
-        arg_string = "./tests/data/test.md -css --encoding=cp1251"
+        md_file_name = '.\\tests\utest.md'
+        html_file_name = '.\\tests\utest.html'
+        arg_string = "./tests/utest.md -css --encoding=cp1251"
         args = arg_string.split()
         self.__create_md_file(md_file_name)
         md_to_html.mdtohtml.main(args)
 
-        self.__remove_files([md_file_name])
+        self.__remove_files([md_file_name, html_file_name])
 
