@@ -3,8 +3,9 @@
 
 """ This is wrap around markdown2.py call for generate whole html file 
 insteed of body content. 
-Markdown file must be in UTF-8 encoding.
-Result file would bi in UTF-8 encoding.
+If markdown file encoding diferent from UTF-8, 
+it must be set in parameters.
+Result file would be in UTF-8 encoding.
 
 Author: Pichugin Viacheslav.
 2015
@@ -16,7 +17,6 @@ import codecs
 import re
 import argparse
 
-_DEBUG = False
 MD_ENCODING = 'utf-8'
 HTML_ENCODING = 'utf-8'
 BOM = u'\ufeff'
@@ -36,7 +36,7 @@ tail_template = """</body>
 
 class Convertor(object):
     """Main class for the module.
-    can be used either from command lile call, or throu API.
+    Can be used either from command line call, or through API.
     """
     def __init__(self):
         super(Convertor, self).__init__()
@@ -67,11 +67,11 @@ class Convertor(object):
 
     def _convert(self, md_text, css = True):
         """
-        Conver given text in markdown format to text in html format and
+        Convert given text in markdown format to text in html format and
         return it. Optional boolean parameter "css" (default value is True) 
         can link stylesheet 'main.css' to html-file.
-        BOM characters at the start of text determines automatically and 
-        removes if exists.
+        BOM characters at the start of text (utf-8) determines 
+        automatically and removes if exists.
         """
         import markdown2
 
@@ -88,11 +88,9 @@ class Convertor(object):
             print 'remove BOM'
         text = markdown2.markdown(md_text, extras=['tables', 'wiki-tables'])
         output += text
-
         output += tail_template
 
         return output
-
 
     def get_file_name(self, full_path):
         """extract clear file name (without extention) from full path"""
@@ -136,14 +134,13 @@ class Convertor(object):
 def main(arg_array = None):
     """
     Starter for convertor, when called from command line.
-    Parameter "args" used only form unit testing.
+    Parameter "args" used form unit tests only.
     """
     convertor = Convertor()
     args = convertor.get_args(arg_array)
     if not convertor.check_md_file_name(args.md_file_name):
         print 'You forgot to enter markdown file name'
         sys.exit(1)
-        
 
     convertor.convert(args.md_file_name, args.css, args.encoding)
 
